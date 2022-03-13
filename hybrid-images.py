@@ -1,7 +1,6 @@
 import numpy
 from numpy.fft import fft2, ifft2, fftshift, ifftshift
-from scipy import misc
-from scipy import ndimage
+import imageio
 import math
 
 def scaleSpectrum(A):
@@ -22,10 +21,10 @@ def makeGaussianFilter(numRows, numCols, sigma, highPass=True):
 
 def filterDFT(imageMatrix, filterMatrix):
    shiftedDFT = fftshift(fft2(imageMatrix))
-   misc.imsave("dft.png", scaleSpectrum(shiftedDFT))
+   imageio.imwrite("dft.png", scaleSpectrum(shiftedDFT))
 
    filteredDFT = shiftedDFT * filterMatrix
-   misc.imsave("filtered-dft.png", scaleSpectrum(filteredDFT))
+   imageio.imwrite("filtered-dft.png", scaleSpectrum(filteredDFT))
    return ifft2(ifftshift(filteredDFT))
 
 
@@ -47,18 +46,19 @@ def hybridImage(highFreqImg, lowFreqImg, sigmaHigh, sigmaLow):
 
 
 def playWithFiltering():
-   marilyn = ndimage.imread("marilyn.png", flatten=True)
+   marilyn = imageio.imread("marilyn.png", as_gray=True)
 
    highPassedMarilyn = highPass(marilyn, 20)
    lowPassedMarilyn = lowPass(marilyn, 20)
 
-   misc.imsave("low-passed-marilyn.png", numpy.real(lowPassedMarilyn))
-   misc.imsave("high-passed-marilyn.png", numpy.real(highPassedMarilyn))
-   misc.imsave("sum-of-marilyns.png", numpy.real((highPassedMarilyn + lowPassedMarilyn)/2.0))
+   imageio.imwrite("low-passed-marilyn.png", numpy.real(lowPassedMarilyn))
+   imageio.imwrite("high-passed-marilyn.png", numpy.real(highPassedMarilyn))
+   imageio.imwrite("sum-of-marilyns.png", numpy.real((highPassedMarilyn + lowPassedMarilyn)/2.0))
 
 if __name__ == "__main__":
-   einstein = ndimage.imread("einstein.png", flatten=True)
-   marilyn = ndimage.imread("marilyn.png", flatten=True)
+   einstein = imageio.imread("einstein.png", as_gray=True)
+   marilyn = imageio.imread("marilyn.png", as_gray=True)
 
    hybrid = hybridImage(einstein, marilyn, 25, 10)
-   misc.imsave("marilyn-einstein.png", numpy.real(hybrid))
+   imageio.imwrite("marilyn-einstein.png", numpy.real(hybrid))
+   playWithFiltering()
